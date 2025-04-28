@@ -70,11 +70,12 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp", builder =>
+    options.AddPolicy("AllowAngularApp", policy =>
     {
-        builder.WithOrigins("http://localhost:4200")
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials(); // Permite envio de credenciais (cookies, auth headers)
     });
 });
 
@@ -84,10 +85,19 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    // Em desenvolvimento, não redirecionamos para HTTPS
+    // Isso evita problemas com o CORS
+}
+else
+{
+    // Apenas em produção usamos redirecionamento HTTPS
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
+// Importante: UseCors deve vir antes do UseAuthentication e UseAuthorization
 app.UseCors("AllowAngularApp");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ErrorHandlingMiddleware>();
