@@ -1,0 +1,93 @@
+@TaskManager.API_HostAddress = http://localhost:5024
+
+### Autenticação
+
+# Registrar um novo usuário
+POST {{TaskManager.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+
+###
+
+# Login
+POST {{TaskManager.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123!"
+}
+
+###
+
+### Tarefas
+# Variável para armazenar o token JWT após o login
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Obter todas as tarefas
+GET {{TaskManager.API_HostAddress}}/api/tasks
+Authorization: Bearer {{authToken}}
+
+###
+
+# Obter tarefa por ID
+GET {{TaskManager.API_HostAddress}}/api/tasks/1
+Authorization: Bearer {{authToken}}
+
+###
+
+# Criar nova tarefa
+POST {{TaskManager.API_HostAddress}}/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Completar projeto",
+  "description": "Finalizar o projeto de gerenciamento de tarefas",
+  "priority": 1,
+  "dueDate": "2023-12-31T23:59:59"
+}
+
+###
+
+# Atualizar tarefa
+PUT {{TaskManager.API_HostAddress}}/api/tasks/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Completar projeto - atualizado",
+  "description": "Finalizar o projeto de gerenciamento de tarefas com novas funcionalidades",
+  "isCompleted": false,
+  "priority": 2,
+  "dueDate": "2023-12-31T23:59:59"
+}
+
+###
+
+# Marcar tarefa como concluída
+PUT {{TaskManager.API_HostAddress}}/api/tasks/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Completar projeto",
+  "description": "Finalizar o projeto de gerenciamento de tarefas",
+  "isCompleted": true,
+  "priority": 2,
+  "dueDate": "2023-12-31T23:59:59"
+}
+
+###
+
+# Excluir tarefa
+DELETE {{TaskManager.API_HostAddress}}/api/tasks/1
+Authorization: Bearer {{authToken}}
+
+###
